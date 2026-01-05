@@ -466,25 +466,33 @@ Ao iniciar a aplicação pela primeira vez, um usuário administrador é criado 
 
 ## 🚀 CONFIGURAÇÃO E EXECUÇÃO
 
-### Maven
-
-Para instalação completa do Maven, consulte o [Guia de Instalação do Maven no README-JAVA.md](README-JAVA.md#-instalação-do-maven).
-
-**Verificar instalação:**
-   ```bash
-   mvn -version
-   ```
-   
 ### Backend (Spring Boot)
+
+O projeto utiliza **Maven Wrapper (mvnw)**, então não é necessário instalar o Maven globalmente ou configurar variáveis de sistema.
+
+**No Windows:**
 ```bash
+cd java
+
 # Compilar
-mvn clean install
+.\mvnw.cmd clean install
 
 # Executar
-mvn spring-boot:run
-
-# Porta padrão: 8081
+.\mvnw.cmd spring-boot:run
 ```
+
+**No Linux/macOS:**
+```bash
+cd java
+
+# Compilar
+./mvnw clean install
+
+# Executar
+./mvnw spring-boot:run
+```
+
+**Porta padrão:** 8081
 
 ### Frontend (Angular)
 ```bash

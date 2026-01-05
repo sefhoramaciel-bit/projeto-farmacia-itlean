@@ -1,51 +1,42 @@
 # 📝 Comandos Úteis
 
-## ⚠️ Instalação do Maven (Windows)
+## ✅ Maven Wrapper
 
-Se você receber o erro `'mvn' não é reconhecido como comando`, siga estes passos:
-
-### Opção 1: Instalar Maven via Chocolatey (Recomendado)
-```powershell
-# Instalar Chocolatey (se não tiver)
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-
-# Instalar Maven
-choco install maven
-```
-
-### Opção 2: Instalação Manual
-1. Baixe o Maven: https://maven.apache.org/download.cgi (apache-maven-3.9.x-bin.zip)
-2. Extraia para `C:\Program Files\Apache\maven`
-3. Adicione ao PATH:
-   - Pressione `Win + R`, digite `sysdm.cpl` e pressione Enter
-   - Aba "Avançado" → "Variáveis de Ambiente"
-   - Em "Variáveis do sistema", edite "Path"
-   - Adicione: `C:\Program Files\Apache\maven\bin`
-4. Abra um novo terminal e verifique: `mvn -version`
-
-### Opção 3: Usar Maven Wrapper (se disponível)
-```powershell
-# Windows
-.\mvnw.cmd spring-boot:run
-
-# Linux/Mac
-./mvnw spring-boot:run
-```
+O projeto utiliza **Maven Wrapper (mvnw)**, então **não é necessário instalar o Maven** ou configurar variáveis de sistema. O Maven será baixado automaticamente na primeira execução.
 
 ## Build e Execução
 
-```bash
+### Windows
+
+```powershell
 # Build do projeto
-mvn clean install
+.\mvnw.cmd clean install
 
 # Executar aplicação
-mvn spring-boot:run
+.\mvnw.cmd spring-boot:run
 
 # Executar testes
-mvn test
+.\mvnw.cmd test
 
 # Gerar JAR
-mvn clean package
+.\mvnw.cmd clean package
+java -jar target/farmacia-api-1.0.0.jar
+```
+
+### Linux/macOS
+
+```bash
+# Build do projeto
+./mvnw clean install
+
+# Executar aplicação
+./mvnw spring-boot:run
+
+# Executar testes
+./mvnw test
+
+# Gerar JAR
+./mvnw clean package
 java -jar target/farmacia-api-1.0.0.jar
 ```
 
@@ -111,8 +102,12 @@ $env:JWT_EXPIRATION="86400000"
 # Java
 java -version
 
-# Maven
-mvn -version
+# Maven (via wrapper)
+# Windows
+.\mvnw.cmd -version
+
+# Linux/macOS
+./mvnw -version
 
 # PostgreSQL
 psql --version
