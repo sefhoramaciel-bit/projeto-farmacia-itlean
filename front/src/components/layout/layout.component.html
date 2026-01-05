@@ -1,0 +1,122 @@
+<div class="min-h-screen bg-gray-100 w-full overflow-x-hidden">
+  <!-- Navbar -->
+  <nav class="bg-[#2D3345] shadow-md sticky top-0 z-50 w-full overflow-x-hidden">
+    <div class="w-full px-2 sm:px-4 md:px-6 lg:px-8 max-w-full">
+      <div class="flex items-center justify-between h-14 sm:h-16 min-w-0">
+        
+        <!-- Logo and Brand Name -->
+        <div class="flex-shrink-0 flex items-center">
+          <img class="h-8 sm:h-10 w-auto" src="src/assets/logo.png" alt="Grupo DPSP Logo">
+          <span class="ml-2 sm:ml-4 md:ml-8 text-base sm:text-lg md:text-xl font-bold text-[#99E0FF] truncate">
+            Grupo DPSP
+          </span>
+        </div>
+
+        <!-- Desktop Menu Links -->
+        <div class="hidden md:flex flex-1 justify-center ml-8">
+          <div class="flex items-baseline space-x-4">
+            @for (link of navLinks(); track link.path) {
+              <a (click)="navigateWithReload(link.path)" [class.bg-[#FE5D5C]]="isActiveRoute(link.path)" [class.text-white]="isActiveRoute(link.path)" [class.font-bold]="isActiveRoute(link.path)"
+                 class="text-gray-200/90 hover:bg-gray-500/50 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer">
+                {{ link.label }}
+              </a>
+            }
+          </div>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="flex md:hidden">
+          <button (click)="toggleMobileMenu()" type="button" class="bg-gray-600/50 inline-flex items-center justify-center p-2 rounded-lg text-gray-200 hover:text-white hover:bg-gray-500/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-700 focus:ring-white/50 transition-all duration-300" aria-controls="mobile-menu" aria-expanded="false">
+            <span class="sr-only">Open main menu</span>
+            <svg [class.hidden]="isMobileMenuOpen()" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            <svg [class.hidden]="!isMobileMenuOpen()" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div [class.hidden]="!isMobileMenuOpen()" class="md:hidden" id="mobile-menu">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-[#2D3345]/80">
+        @for (link of navLinks(); track link.path) {
+          <a (click)="navigateWithReload(link.path)" [class.bg-[#FE5D5C]]="isActiveRoute(link.path)" [class.text-white]="isActiveRoute(link.path)" [class.font-bold]="isActiveRoute(link.path)" class="text-gray-200/90 hover:bg-gray-500/50 hover:text-white block px-3 py-2 rounded-lg text-base font-medium transition-all duration-300 cursor-pointer">{{ link.label }}</a>
+        }
+        <!-- Logout Button for Mobile -->
+        <div class="pt-2 border-t border-gray-600 mt-2">
+          <button (click)="logout(); isMobileMenuOpen.set(false)" class="w-full px-3 py-2 rounded-lg text-white bg-gradient-to-r from-[#FE5D5C]/90 to-[#E53E3E]/90 hover:from-[#FE5D5C] hover:to-[#E53E3E] transition-all duration-300 flex items-center justify-center font-medium shadow-md hover:shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex w-full min-w-0">
+    <!-- Sidebar -->
+    <aside class="hidden md:flex md:flex-col md:w-64 bg-[#2D3345] min-h-[calc(100vh-3.5rem)] md:min-h-[calc(100vh-4rem)] shadow-md flex-shrink-0">
+      <!-- User Info at Top -->
+      <div class="p-6 border-b border-gray-500/50">
+        @if (currentUser(); as user) {
+          <div class="flex flex-col items-center">
+            <div 
+              (click)="onAvatarClick()" 
+              class="h-20 w-20 rounded-full bg-[#99E0FF] flex items-center justify-center mb-4 cursor-pointer hover:opacity-80 transition-opacity relative group"
+              title="Clique para trocar o avatar">
+              @if (getAvatarUrl()) {
+                <img [src]="getAvatarUrl()!" alt="Avatar" class="h-20 w-20 rounded-full object-cover">
+              } @else {
+                <span class="text-3xl font-bold text-[#2D3345]">{{ user.nome.charAt(0).toUpperCase() }}</span>
+              }
+              <div class="absolute inset-0 rounded-full bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center transition-all">
+                <svg class="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <p class="text-white font-medium text-lg">Bem vindo,</p>
+            <p class="text-[#99E0FF] font-bold text-xl mt-1">{{ user.nome }}!</p>
+            <p class="text-gray-300 text-sm mt-2">{{ user.email }}</p>
+          </div>
+        }
+      </div>
+
+      <!-- Sidebar Menu Links -->
+      <nav class="flex-1 p-4">
+        <ul class="space-y-2">
+          @for (link of navLinks(); track link.path) {
+            <li>
+              <a (click)="navigateWithReload(link.path)" [class.bg-[#FE5D5C]]="isActiveRoute(link.path)" [class.text-white]="isActiveRoute(link.path)" [class.font-bold]="isActiveRoute(link.path)"
+                 class="flex items-center px-4 py-3 text-gray-200/90 hover:bg-gray-500/50 hover:text-white rounded-lg text-sm font-medium transition-all duration-300 cursor-pointer">
+                <span>{{ link.label }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </nav>
+
+      <!-- Logout Button at Bottom -->
+      <div class="p-4 border-t border-gray-500/50">
+        @if (currentUser(); as user) {
+          <button (click)="logout()" class="w-full px-4 py-3 rounded-lg text-white bg-gradient-to-r from-[#FE5D5C]/90 to-[#E53E3E]/90 hover:from-[#FE5D5C] hover:to-[#E53E3E] transition-all duration-300 flex items-center justify-center font-medium shadow-md hover:shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span>Logout</span>
+          </button>
+        }
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 min-h-[calc(100vh-3.5rem)] md:min-h-[calc(100vh-4rem)] w-full min-w-0 overflow-x-hidden">
+      <div class="p-3 sm:p-4 md:p-6 w-full max-w-full">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</div>

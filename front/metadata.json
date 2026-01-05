@@ -1,0 +1,5 @@
+{
+  "name": "Sistema de Farmácia DPSP",
+  "description": "Uma aplicação web moderna para gerenciamento de farmácia, incluindo controle de medicamentos, estoque, clientes e vendas.",
+  "requestFramePermissions": []
+}

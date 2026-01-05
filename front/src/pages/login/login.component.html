@@ -1,0 +1,57 @@
+<div class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md backdrop-blur-sm rounded-2xl shadow-2xl p-8 space-y-6 transform hover:scale-[1.02] transition-transform duration-500"
+       style="background: #2D3345;">
+    <div class="text-center">
+      <img class="mx-auto h-20 w-auto" src="src/assets/logo.png" alt="Grupo DPSP Logo">
+      <h2 class="mt-4 text-3xl font-extrabold text-[#99E0FF] drop-shadow-md">
+        Grupo DPSP
+      </h2>
+      <p class="mt-2 text-sm text-white/90">
+        Bem-vindo de volta!
+      </p>
+    </div>
+    
+    <form class="mt-8 space-y-6" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="rounded-md shadow-sm -space-y-px">
+        <div>
+          <label for="email-address" class="sr-only">Email</label>
+          <input id="email-address" formControlName="email" type="email" required 
+                 class="appearance-none rounded-none relative block w-full px-3 py-3 border-2 border-gray-300/60 bg-white/90 placeholder-gray-500 text-gray-900 rounded-t-lg focus:outline-none focus:ring-2 focus:ring-[#99E0FF]/50 focus:border-[#99E0FF] focus:z-10 sm:text-sm transition-all duration-300"
+                 placeholder="Email">
+          @if (email?.invalid && (email?.dirty || email?.touched)) {
+            <div class="text-red-500 text-xs p-1 bg-white/80 rounded-b-md">
+              @if (email?.errors?.['required']) { <span>Email é obrigatório.</span> }
+              @if (email?.errors?.['email']) { <span>Formato de email inválido.</span> }
+            </div>
+          }
+        </div>
+        <div>
+          <label for="password" class="sr-only">Senha</label>
+          <input id="password" formControlName="password" type="password" required 
+                 class="appearance-none rounded-none relative block w-full px-3 py-3 border-2 border-gray-300/60 bg-white/90 placeholder-gray-500 text-gray-900 rounded-b-lg focus:outline-none focus:ring-2 focus:ring-[#99E0FF]/50 focus:border-[#99E0FF] focus:z-10 sm:text-sm transition-all duration-300"
+                 placeholder="Senha">
+          @if (password?.invalid && (password?.dirty || password?.touched)) {
+             <div class="text-red-500 text-xs p-1 bg-white/80 rounded-b-md">
+              @if (password?.errors?.['required']) { <span>Senha é obrigatória.</span> }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <button type="submit" [disabled]="isLoading()"
+                class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-[#2D3345] bg-[#99E0FF]/90 hover:bg-[#99E0FF] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#99E0FF]/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg">
+          @if (isLoading()) {
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-[#2D3345]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Entrando...</span>
+          } @else {
+            <span>Entrar</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,268 @@
+<div class="space-y-4 sm:space-y-6 w-full">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-center w-full">
+    <div class="w-full md:w-auto">
+      <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#2D3345] to-[#4A5568]">
+        Gerenciar Medicamentos
+      </h1>
+      <p class="text-sm sm:text-base md:text-lg text-gray-600 mt-1">Adicione, edite e organize os medicamentos da farmácia.</p>
+    </div>
+    @if (isAdmin()) {
+      <button (click)="openCreateModal()" class="mt-4 md:mt-0 flex items-center px-6 py-3 text-white font-semibold rounded-lg shadow-md bg-gradient-to-r from-[#2D3345] to-[#4A5568] hover:scale-105 transform transition-transform duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+        Adicionar Medicamento
+      </button>
+    }
+  </header>
+
+  <!-- Tabs -->
+  <div class="border-b border-gray-200">
+    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+      <button (click)="changeTab('active')" [class.border-[#2D3345]]="activeTab() === 'active'" [class.text-[#2D3345]]="activeTab() === 'active'" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+        Ativos
+      </button>
+      <button (click)="changeTab('inactive')" [class.border-[#2D3345]]="activeTab() === 'inactive'" [class.text-[#2D3345]]="activeTab() === 'inactive'" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+        Inativos
+      </button>
+    </nav>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="bg-white/80 backdrop-blur-sm rounded-lg shadow-sm p-4">
+    <div class="relative">
+      <input 
+        type="text" 
+        [value]="searchTerm()" 
+        (input)="onSearchChange($any($event.target).value)"
+        placeholder="Buscar por nome, descrição, categoria ou ID..." 
+        class="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-gray-200 text-gray-900">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden">
+    @if (isLoading()) {
+      <div class="p-8 text-center text-gray-500">Carregando medicamentos...</div>
+    } @else {
+      <div class="overflow-x-auto w-full">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descrição</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoria</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estoque</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preço</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Validade</th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (med of filteredMedicines(); track med.id; let i = $index) {
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-600 font-mono cursor-pointer group relative inline-block" 
+                       (click)="copyToClipboard(med.id)">
+                    <span class="hover:text-gray-900 transition-colors">{{ getShortId(med.id) }}</span>
+                    <span class="absolute left-0 bottom-full mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 max-w-xs truncate">
+                      {{ med.id }}<br><span class="text-gray-300">Clique para copiar</span>
+                    </span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ med.nome }}</div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm text-gray-700 max-w-xs group relative">
+                    @if (med.descricao) {
+                      <span class="block truncate">{{ med.descricao }}</span>
+                      <span class="absolute left-0 bottom-full mb-2 px-3 py-2 text-xs text-white bg-gray-800 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 max-w-md break-words shadow-lg">
+                        {{ med.descricao }}
+                      </span>
+                    } @else {
+                      <span class="text-gray-400">-</span>
+                    }
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-700">{{ med.categoria?.nome || '-' }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ med.quantidadeEstoque }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ med.preco | currency:'BRL' }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ med.validade || '-' }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  @if (isAdmin()) {
+                    <div class="flex items-center justify-end space-x-1">
+                      @if (activeTab() === 'active') {
+                        <button (click)="inactivateMedicine(med)" class="p-2 rounded-full text-orange-600 hover:bg-orange-100 transition-colors" title="Inativar">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+                        </button>
+                      }
+                      @if (activeTab() === 'inactive') {
+                        <button (click)="reactivateMedicine(med)" class="p-2 rounded-full text-green-600 hover:bg-green-100 transition-colors" title="Reativar">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                        </button>
+                      }
+                      <button (click)="openEditModal(med)" class="p-2 rounded-full text-indigo-600 hover:bg-indigo-100 transition-colors" title="Editar">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
+                      </button>
+                      <button (click)="deleteMedicine(med.id)" class="p-2 rounded-full text-red-600 hover:bg-red-100 transition-colors" title="Excluir">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                      </button>
+                    </div>
+                  } @else {
+                    <span class="text-gray-400 text-xs">Apenas visualização</span>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="px-6 py-8 text-center text-gray-500">
+                  @if (searchTerm()) {
+                    Nenhum medicamento encontrado para "{{ searchTerm() }}".
+                  } @else {
+                    Nenhum medicamento encontrado.
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Modal for Create/Edit -->
+<app-modal [isOpen]="isModalOpen()" [title]="modalTitle()" (closeModal)="isModalOpen.set(false)">
+  <form [formGroup]="medicineForm" (ngSubmit)="saveMedicine()" class="space-y-3 sm:space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Nome <span class="text-red-500">*</span></label>
+      <input formControlName="nome" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-gray-200 p-2.5 text-gray-900"
+             [class.border-red-500]="medicineForm.get('nome')?.invalid && (medicineForm.get('nome')?.dirty || medicineForm.get('nome')?.touched)">
+      @if (medicineForm.get('nome')?.hasError('required') && (medicineForm.get('nome')?.dirty || medicineForm.get('nome')?.touched)) {
+        <p class="mt-1 text-xs text-red-600">O campo Nome é obrigatório.</p>
+      }
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Descrição</label>
+      <textarea formControlName="descricao" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-gray-200 p-2.5 text-gray-900"></textarea>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Preço <span class="text-red-500">*</span></label>
+        <input formControlName="preco" type="number" step="0.01" min="0.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-gray-200 p-2.5 text-gray-900"
+               [class.border-red-500]="medicineForm.get('preco')?.invalid && (medicineForm.get('preco')?.dirty || medicineForm.get('preco')?.touched)">
+        @if (medicineForm.get('preco')?.hasError('required') && (medicineForm.get('preco')?.dirty || medicineForm.get('preco')?.touched)) {
+          <p class="mt-1 text-xs text-red-600">O campo Preço é obrigatório.</p>
+        }
+        @if (medicineForm.get('preco')?.hasError('min') && (medicineForm.get('preco')?.dirty || medicineForm.get('preco')?.touched)) {
+          <p class="mt-1 text-xs text-red-600">O preço é obrigatório e deve ser maior que zero.</p>
+        }
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Quantidade em Estoque <span class="text-red-500">*</span></label>
+        <input formControlName="quantidadeEstoque" type="number" min="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-gray-200 p-2.5 text-gray-900"
+               [class.border-red-500]="medicineForm.get('quantidadeEstoque')?.invalid && (medicineForm.get('quantidadeEstoque')?.dirty || medicineForm.get('quantidadeEstoque')?.touched)">
+        @if (medicineForm.get('quantidadeEstoque')?.hasError('required') && (medicineForm.get('quantidadeEstoque')?.dirty || medicineForm.get('quantidadeEstoque')?.touched)) {
+          <p class="mt-1 text-xs text-red-600">O campo Quantidade em Estoque é obrigatório.</p>
+        }
+        @if (medicineForm.get('quantidadeEstoque')?.hasError('min') && (medicineForm.get('quantidadeEstoque')?.dirty || medicineForm.get('quantidadeEstoque')?.touched)) {
+          <p class="mt-1 text-xs text-red-600">A quantidade em estoque é obrigatória e não pode ser negativa.</p>
+        }
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Data de Validade <span class="text-red-500">*</span></label>
+        <input formControlName="validade" type="date" [min]="getMinDate()" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-gray-200 py-3 px-4 text-gray-900 accent-[#99E0FF]"
+               [class.border-red-500]="medicineForm.get('validade')?.invalid && (medicineForm.get('validade')?.dirty || medicineForm.get('validade')?.touched)">
+        @if (medicineForm.get('validade')?.hasError('required') && (medicineForm.get('validade')?.dirty || medicineForm.get('validade')?.touched)) {
+          <p class="mt-1 text-xs text-red-600">A data de validade é obrigatória.</p>
+        }
+        @if (medicineForm.get('validade')?.hasError('dataFutura') && (medicineForm.get('validade')?.dirty || medicineForm.get('validade')?.touched)) {
+          <p class="mt-1 text-xs text-red-600">A data de validade deve ser futura.</p>
+        }
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Categoria <span class="text-red-500">*</span></label>
+        <select formControlName="categoriaId" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm bg-gray-200 p-2.5 text-gray-900"
+                [class.border-red-500]="medicineForm.get('categoriaId')?.invalid && (medicineForm.get('categoriaId')?.dirty || medicineForm.get('categoriaId')?.touched)">
+          <option value="" disabled>Selecione uma categoria</option>
+          @for (cat of categories(); track cat.id) {
+            <option [value]="cat.id">{{ cat.nome }}</option>
+          }
+        </select>
+        @if (medicineForm.get('categoriaId')?.hasError('required') && (medicineForm.get('categoriaId')?.dirty || medicineForm.get('categoriaId')?.touched)) {
+          <p class="mt-1 text-xs text-red-600">O campo Categoria é obrigatório.</p>
+        }
+      </div>
+    </div>
+    <div>
+      <label class="flex items-center space-x-3 cursor-pointer">
+        <input formControlName="ativo" type="checkbox" class="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 accent-[#99E0FF] cursor-pointer">
+        <span class="text-sm font-medium text-gray-700">Medicamento Ativo</span>
+      </label>
+      <p class="mt-1 text-xs text-gray-500">Desmarque para inativar o medicamento. Medicamentos inativos não podem ser vendidos.</p>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Imagens (mínimo 1, máximo 3)</label>
+      <input 
+        type="file" 
+        (change)="onImageSelected($event)"
+        accept="image/jpeg,image/jpg,image/png,image/webp"
+        multiple
+        class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-200 focus:outline-none focus:border-indigo-500">
+      <p class="mt-1 text-xs text-gray-500">Selecione entre 1 e 3 imagens (JPG, PNG ou WebP, máx 5MB cada)</p>
+      
+      <!-- Preview das imagens selecionadas -->
+      @if (imagePreviews().length > 0 || existingImages().length > 0) {
+        <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+          @for (preview of imagePreviews(); track $index) {
+            <div class="relative group">
+              <img [src]="preview" alt="Preview" class="w-full h-32 object-cover rounded-lg border border-gray-300">
+              <button 
+                type="button"
+                (click)="removeImage($index)"
+                class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+          }
+          @for (existingImg of existingImages(); track $index) {
+            <div class="relative group">
+              <img [src]="'http://localhost:8081' + existingImg" alt="Imagem existente" class="w-full h-32 object-cover rounded-lg border border-gray-300">
+              <button 
+                type="button"
+                (click)="removeExistingImage($index)"
+                class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+          }
+        </div>
+        <p class="mt-2 text-xs text-gray-600">
+          Total: {{ imagePreviews().length + existingImages().length }} imagem(ns). 
+          @if (imagePreviews().length + existingImages().length < 1) {
+            <span class="text-red-600">É necessário pelo menos 1 imagem.</span>
+          } @else if (imagePreviews().length + existingImages().length > 3) {
+            <span class="text-red-600">Você possui {{ imagePreviews().length + existingImages().length }} imagem(ns). É permitido no máximo 3 imagens no total.</span>
+          }
+        </p>
+      }
+    </div>
+    <div class="pt-3 sm:pt-4 flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 sm:space-x-3">
+      <button type="button" (click)="isModalOpen.set(false)" class="w-full sm:w-auto px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors text-sm sm:text-base">Cancelar</button>
+      <button type="submit" class="w-full sm:w-auto px-6 py-2 text-white font-semibold rounded-lg shadow-md bg-gradient-to-r from-[#2D3345] to-[#4A5568] hover:scale-105 transform transition-transform text-sm sm:text-base">Salvar</button>
+    </div>
+  </form>
+</app-modal>
