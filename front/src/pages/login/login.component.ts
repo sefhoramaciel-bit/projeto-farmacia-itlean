@@ -21,8 +21,8 @@ export class LoginComponent {
   isLoading = signal(false);
 
   loginForm = this.fb.group({
-    email: ['sefhora@admin.com', [Validators.required, Validators.email]],
-    password: ['123456', [Validators.required]],
+    email: ['admin@farmacia.com', [Validators.required, Validators.email]],
+    password: ['admin123', [Validators.required]],
   });
 
   get email() { return this.loginForm.get('email'); }
