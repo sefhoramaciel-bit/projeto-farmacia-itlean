@@ -54,11 +54,112 @@ Antes de começar, certifique-se de ter instalado:
    ```
 
 2. **Maven**
+
+   ### 📥 Instalação do Maven
+
+   #### Windows
+
+   **Opção 1: Via Chocolatey (Recomendado)**
+   ```powershell
+   # Instalar Chocolatey (se ainda não tiver)
+   # Abra PowerShell como Administrador e execute:
+   Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+   # Instalar Maven
+   choco install maven
+   ```
+
+   **Opção 2: Via winget**
+   ```powershell
+   winget install Apache.Maven
+   ```
+
+   **Opção 3: Instalação Manual**
+   1. Baixe o Maven: https://maven.apache.org/download.cgi
+   2. Escolha o arquivo `apache-maven-X.X.X-bin.zip`
+   3. Extraia para `C:\Program Files\Apache\maven`
+   4. Configure as variáveis de ambiente:
+      - **MAVEN_HOME**: `C:\Program Files\Apache\maven`
+      - Adicione ao **PATH**: `%MAVEN_HOME%\bin`
+   5. Abra um novo terminal e verifique:
+      ```powershell
+      mvn -version
+      ```
+
+   #### Linux (Ubuntu/Debian)
+
    ```bash
+   # Atualizar pacotes
+   sudo apt update
+
+   # Instalar Maven
+   sudo apt install maven
+
    # Verificar instalação
    mvn -version
    ```
-   > Normalmente já vem incluído em IDEs modernas
+
+   #### Linux (CentOS/RHEL/Fedora)
+
+   ```bash
+   # Fedora
+   sudo dnf install maven
+
+   # CentOS/RHEL
+   sudo yum install maven
+
+   # Verificar instalação
+   mvn -version
+   ```
+
+   #### macOS
+
+   **Opção 1: Via Homebrew (Recomendado)**
+   ```bash
+   # Instalar Homebrew (se ainda não tiver)
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+   # Instalar Maven
+   brew install maven
+
+   # Verificar instalação
+   mvn -version
+   ```
+
+   **Opção 2: Via MacPorts**
+   ```bash
+   sudo port install maven3
+   ```
+
+   ### ✅ Verificar Instalação
+
+   Após a instalação, verifique se o Maven está funcionando:
+
+   ```bash
+   mvn -version
+   ```
+
+   Você deve ver algo como:
+   ```
+   Apache Maven 3.9.x
+   Maven home: /usr/share/maven
+   Java version: 17.0.x
+   Java home: /usr/lib/jvm/java-17-openjdk
+   Default locale: pt_BR, platform encoding: UTF-8
+   OS name: "linux", version: "x.x.x", arch: "amd64", family: "unix"
+   ```
+
+   ### 🔧 Configuração (Opcional)
+
+   **Configurar repositório local (Windows):**
+   - O Maven usa `%USERPROFILE%\.m2` como repositório local
+   - Você pode configurar um local diferente editando `%MAVEN_HOME%\conf\settings.xml`
+
+   **Configurar repositório local (Linux/macOS):**
+   - O Maven usa `~/.m2` como repositório local
+   - Você pode configurar um local diferente editando `$MAVEN_HOME/conf/settings.xml`
+
+   > 💡 **Nota**: A maioria das IDEs modernas (IntelliJ IDEA, Eclipse, VS Code) já incluem o Maven ou podem gerenciá-lo automaticamente. Se estiver usando uma IDE, verifique as configurações do projeto.
 
 3. **PostgreSQL**
    - Download: https://www.postgresql.org/download/

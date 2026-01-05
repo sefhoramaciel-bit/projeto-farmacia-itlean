@@ -466,6 +466,15 @@ Ao iniciar a aplicação pela primeira vez, um usuário administrador é criado 
 
 ## 🚀 CONFIGURAÇÃO E EXECUÇÃO
 
+### Maven
+
+Para instalação completa do Maven, consulte o [Guia de Instalação do Maven no README-JAVA.md](README-JAVA.md#-instalação-do-maven).
+
+**Verificar instalação:**
+   ```bash
+   mvn -version
+   ```
+   
 ### Backend (Spring Boot)
 ```bash
 # Compilar
